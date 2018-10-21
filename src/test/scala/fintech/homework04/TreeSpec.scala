@@ -1,6 +1,8 @@
 package fintech.homework04
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{Fact, FlatSpec, Matchers}
+
+import scala.annotation.tailrec
 
 class TreeSpec extends FlatSpec with Matchers {
 
@@ -36,4 +38,27 @@ class TreeSpec extends FlatSpec with Matchers {
     Tree.depth(newTree) should be (Tree.depth(tree))
   }
 
+  "Map of Tree" should "return tree with the same structure" in {
+    val newTree = Tree.map(tree)(x => x.toString)
+    var correct_structure = true
+    def rec(left: Tree[Int], right: Tree[Int], newLeft: Tree[String], newRight: Tree[String]): Unit = {
+      left match {
+        case leaf: Leaf[Int] =>
+          if (leaf.value.toString != newLeft.asInstanceOf[Leaf[String]].value)
+            correct_structure = false
+        case branch: Branch[Int] => rec(branch.left, branch.right, newLeft.asInstanceOf[Branch[String]].left,
+          newLeft.asInstanceOf[Branch[String]].right)
+      }
+      right match {
+        case leaf: Leaf[Int] =>
+          if (leaf.value.toString != newRight.asInstanceOf[Leaf[String]].value)
+            correct_structure = false
+        case branch: Branch[Int] => rec(branch.left, branch.right, newLeft.asInstanceOf[Branch[String]].left,
+          newLeft.asInstanceOf[Branch[String]].right)
+      }
+    }
+    rec(tree.left, tree.right, newTree.asInstanceOf[Branch[String]].left,
+      newTree.asInstanceOf[Branch[String]].right)
+    correct_structure should be (true)
+  }
 }

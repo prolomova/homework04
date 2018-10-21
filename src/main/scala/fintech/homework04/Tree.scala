@@ -20,7 +20,7 @@ object Tree {
         trees.head match {
           case leaf: Leaf[A] => foldFunc(
             value.map(value => g(value, f(leaf.value))) orElse Option(f(leaf.value)), trees.tail)(f)(g)
-          case branch: Branch[A] => foldFunc(value, trees.tail ++ List(branch.right, branch.left))(f)(g)
+          case branch: Branch[A] => foldFunc(value, List(branch.left, branch.right) ++ trees.tail)(f)(g)
         }
     }
     foldFunc(None, List(t))(f)(g)
